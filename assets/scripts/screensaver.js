@@ -18,9 +18,9 @@
 
   const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const GLASS_COLORS = [
-    "rgba(186, 232, 197, 0.58)", // mint
-    "rgba(255, 248, 176, 0.58)", // light yellow
-    "rgba(255, 212, 170, 0.58)", // light orange
+    "rgba(255, 255, 255, 0.92)", // cloud white
+    "rgba(255, 255, 255, 0.86)", // soft white
+    "rgba(255, 255, 255, 0.95)", // bright white
   ];
 
   function createGlyph(letter) {
@@ -67,7 +67,7 @@
 
     // Fill the screen: repeat the alphabet many times based on area
     const area = w * h;
-    const target = Math.max(80, Math.min(320, Math.floor(area / 9000)));
+    const target = Math.max(40, Math.min(160, Math.floor(area / 16000)));
     for (let i = 0; i < target; i++) createGlyph(ALPHABET[i % 26]);
 
     // background is handled in CSS
