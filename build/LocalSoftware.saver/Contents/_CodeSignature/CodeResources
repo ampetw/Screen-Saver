@@ -16,13 +16,17 @@
 		<data>
 		ehVI1JWQoSgBBHNtC0GRGGPIIgA=
 		</data>
+		<key>Resources/assets/fonts/Amelie/Amelie.otf</key>
+		<data>
+		ghIih7seZALrtvK+FitKwCFg9Hs=
+		</data>
 		<key>Resources/assets/styles/screensaver.css</key>
 		<data>
-		eqGvvrw10wjzOmSt71Fl/OzYweQ=
+		YAkDlrIRh1wBOsyPTEvI5x2Zdmc=
 		</data>
 		<key>Resources/screensaver.html</key>
 		<data>
-		u9//8iX7MfDgA05SkURJLb4jfI8=
+		sUkkBoVL/DCuxql1Y0BizaNUUiE=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -48,18 +52,25 @@
 			uXFZp4KDcewY+n06Kk6Kwh0Khe17687pg5LAfSAhBLM=
 			</data>
 		</dict>
+		<key>Resources/assets/fonts/Amelie/Amelie.otf</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vxjjfnAAwYfxje/SeemdA57OB+vDhti0WOu4ehlyp/8=
+			</data>
+		</dict>
 		<key>Resources/assets/styles/screensaver.css</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			VuNHoFCA6j1sQqZUqaMqJXRALA4U+g3PM5TipIv5VaE=
+			jv0m6NEijLagcCUZoM2oKieZz8f2c3XuB/exk+jxhMY=
 			</data>
 		</dict>
 		<key>Resources/screensaver.html</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hV7mv9liGVEyouJyRJsA3NtX5o0p++x5UcHoHFO++Rw=
+			08U5E8yAqs/IgmP2Hit47ZHTlmXv/5T402DKPPO+GJA=
 			</data>
 		</dict>
 	</dict>

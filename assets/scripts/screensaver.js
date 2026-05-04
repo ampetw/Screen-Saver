@@ -1,110 +1,73 @@
 (() => {
-  const host = document.getElementById("glyphs");
-  if (!host) return;
+  const canvas = document.getElementById("kaleido");
+  if (!(canvas instanceof HTMLCanvasElement)) return;
+  const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
+  if (!ctx) return;
 
-  const glyphs = [];
-  let w = 0;
-  let h = 0;
+  let w = 1;
+  let h = 1;
   let dpr = 1;
-  let last = performance.now();
 
-  function rand(min, max) {
-    return min + Math.random() * (max - min);
-  }
-
-  function setVar(el, name, value) {
-    el.style.setProperty(name, value);
-  }
-
-  const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const GLASS_COLORS = [
-    "rgba(255, 255, 255, 0.92)", // cloud white
-    "rgba(255, 255, 255, 0.86)", // soft white
-    "rgba(255, 255, 255, 0.95)", // bright white
-  ];
-
-  function createGlyph(letter) {
-    const el = document.createElement("div");
-    el.className = "glyph";
-    el.textContent = letter;
-
-    const fs = rand(42, 120) * dpr;
-    const x = rand(0, Math.max(1, w - fs));
-    const y = rand(0, Math.max(1, h - fs));
-    const speed = rand(60, 190) * dpr;
-    const dir = rand(0, Math.PI * 2);
-
-    const g = {
-      el,
-      x,
-      y,
-      vx: Math.cos(dir) * speed,
-      vy: Math.sin(dir) * speed,
-      fs,
-    };
-
-    el.style.setProperty("--glyph-color", GLASS_COLORS[(Math.random() * GLASS_COLORS.length) | 0]);
-    setVar(el, "--fs", `${fs}px`);
-    setVar(el, "--x", `${x}px`);
-    setVar(el, "--y", `${y}px`);
-
-    host.appendChild(el);
-    glyphs.push(g);
-  }
-
-  function clearGlyphs() {
-    glyphs.length = 0;
-    host.textContent = "";
-  }
-
-  function layout() {
-    const rect = host.getBoundingClientRect();
-    w = Math.max(1, rect.width);
-    h = Math.max(1, rect.height);
+  function resize() {
     dpr = Math.min(2, window.devicePixelRatio || 1);
-
-    clearGlyphs();
-
-    // Fill the screen: repeat the alphabet many times based on area
-    const area = w * h;
-    const target = Math.max(40, Math.min(160, Math.floor(area / 16000)));
-    for (let i = 0; i < target; i++) createGlyph(ALPHABET[i % 26]);
-
-    // background is handled in CSS
+    const cssW = Math.max(1, canvas.clientWidth || window.innerWidth || 1);
+    const cssH = Math.max(1, canvas.clientHeight || window.innerHeight || 1);
+    w = Math.floor(cssW * dpr);
+    h = Math.floor(cssH * dpr);
+    canvas.width = w;
+    canvas.height = h;
   }
 
-  function tick(now) {
-    const dt = Math.min(0.05, (now - last) / 1000);
-    last = now;
+  function cssVar(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
 
-    for (const g of glyphs) {
-      const bw = g.fs * 0.72;
-      const bh = g.fs * 0.95;
+  function draw(now) {
+    const t = now * 0.0001;
+    const cOrange = cssVar("--g-orange", "orange");
+    const cOrangeRed = cssVar("--g-orangered", "orangered");
+    const cYellow = cssVar("--g-yellow", "#ffe14a");
+    const cGreen = cssVar("--g-green", "#20e36b");
+    const cGreenBlue = cssVar("--g-greenblue", "#00c6b8");
 
-      g.x += g.vx * dt;
-      g.y += g.vy * dt;
+    const angle = t * 1.2;
+    const vx = Math.cos(angle);
+    const vy = Math.sin(angle);
+    const diag = Math.hypot(w, h);
+    const ax = w * 0.5 + vx * diag * 0.35;
+    const ay = h * 0.5 + vy * diag * 0.35;
+    const bx = w * 0.5 - vx * diag * 0.35;
+    const by = h * 0.5 - vy * diag * 0.35;
 
-      if (g.x <= 0) {
-        g.x = 0;
-        g.vx = Math.abs(g.vx);
-      } else if (g.x + bw >= w) {
-        g.x = w - bw;
-        g.vx = -Math.abs(g.vx);
-      }
+    const g = ctx.createLinearGradient(ax, ay, bx, by);
+    const s1 = (Math.sin(t * 1.3) * 0.5 + 0.5) * 0.12;
+    const s2 = (Math.sin(t * 0.9 + 1.2) * 0.5 + 0.5) * 0.12;
+    g.addColorStop(0.0, cOrange);
+    g.addColorStop(0.18 + s1, cOrangeRed);
+    g.addColorStop(0.42, cYellow);
+    g.addColorStop(0.68 - s2, cGreen);
+    g.addColorStop(1.0, cGreenBlue);
 
-      if (g.y <= 0) {
-        g.y = 0;
-        g.vy = Math.abs(g.vy);
-      } else if (g.y + bh >= h) {
-        g.y = h - bh;
-        g.vy = -Math.abs(g.vy);
-      }
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
 
-      setVar(g.el, "--x", `${g.x}px`);
-      setVar(g.el, "--y", `${g.y}px`);
-    }
+    // Soft moving highlights for depth
+    ctx.save();
+    ctx.globalCompositeOperation = "overlay";
+    ctx.globalAlpha = 0.35;
+    const hx = (Math.sin(t * 1.7) * 0.5 + 0.5) * w;
+    const hy = (Math.cos(t * 1.3) * 0.5 + 0.5) * h;
+    const r1 = Math.min(w, h) * 0.15;
+    const r2 = Math.max(w, h) * 0.75;
+    const glow = ctx.createRadialGradient(hx, hy, r1, hx, hy, r2);
+    glow.addColorStop(0, "rgba(255,255,255,0.6)");
+    glow.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
 
-    requestAnimationFrame(tick);
+    requestAnimationFrame(draw);
   }
 
   let resizeTimer = 0;
@@ -112,12 +75,12 @@
     "resize",
     () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(layout, 80);
+      resizeTimer = window.setTimeout(resize, 60);
     },
     { passive: true }
   );
 
-  layout();
-  requestAnimationFrame(tick);
+  resize();
+  requestAnimationFrame(draw);
 })();
 

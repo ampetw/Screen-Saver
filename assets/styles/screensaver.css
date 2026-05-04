@@ -32,11 +32,13 @@
 }
 
 :root {
-  --c1: #0a0f2c;
-  --c2: #2a1a6b;
-  --c3: #8e2de2;
-  --c4: #ff5e7e;
-  --c5: #ffb86b;
+  --g-orange: orange;
+  --g-orangered: orangered;
+  --g-yellow: #ffe14a;
+  --g-green: #20e36b;
+  --g-greenblue: #00c6b8;
+
+  --bg: #0a0a0a;
 
   /* One full period of the stripe pattern, in pixels. The animation
      translates by exactly this distance so the loop is seamless. */
@@ -55,8 +57,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  /* Light sky gradient */
-  background: linear-gradient(180deg, #bfe9ff 0%, #d7f3ff 45%, #eefaff 100%);
+  background: var(--bg);
   cursor: none;
 }
 
@@ -64,70 +65,15 @@ body {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: linear-gradient(180deg, #bfe9ff 0%, #d7f3ff 45%, #eefaff 100%);
+  background: var(--bg);
 }
 
-.stage::before {
-  content: "";
-  position: absolute;
-  inset: -30%;
-  pointer-events: none;
-  /* light-blue moving gradient layer */
-  background:
-    radial-gradient(circle at 30% 40%, rgba(125, 211, 252, 0.55), rgba(125, 211, 252, 0) 55%),
-    radial-gradient(circle at 75% 25%, rgba(56, 189, 248, 0.45), rgba(56, 189, 248, 0) 60%),
-    linear-gradient(120deg, rgba(14, 165, 233, 0.22), rgba(34, 211, 238, 0.16), rgba(125, 211, 252, 0.18));
-  mix-blend-mode: multiply;
-  filter: blur(2px) saturate(1.05);
-  animation: blue-drift 14s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes blue-drift {
-  0% {
-    transform: translate3d(-4%, -2%, 0) rotate(-2deg);
-  }
-  50% {
-    transform: translate3d(5%, 3%, 0) rotate(2deg);
-  }
-  100% {
-    transform: translate3d(-4%, -2%, 0) rotate(-2deg);
-  }
-}
-
-.glyphs {
+.kaleido {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.glyph {
-  position: absolute;
-  transform: translate3d(var(--x), var(--y), 0);
-  will-change: transform;
-  font-family: "Amelie", ui-rounded, system-ui, -apple-system, "SF Pro Rounded",
-    "Avenir Next", "Avenir", sans-serif;
-  font-weight: 800;
-  font-size: var(--fs);
-  letter-spacing: 0.02em;
-  line-height: 1;
-  /* Cloudy: white fill + soft glow */
-  color: var(--glyph-color, rgba(255, 255, 255, 0.78));
-  -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.22);
-  text-shadow:
-    0 14px 30px rgba(1, 44, 84, 0.12),
-    0 0 34px rgba(255, 255, 255, 0.62),
-    0 0 14px rgba(255, 255, 255, 0.42);
-  filter: blur(0.6px) saturate(1.02);
-  mix-blend-mode: normal;
-  opacity: 0.82;
-  user-select: none;
-}
-
-/* If the user wants ONLY pixel squares, hide the old curtain. */
-.curtain {
-  display: none;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /*
@@ -168,17 +114,7 @@ body {
      covers the wrapper's right edge seamlessly */
   width: calc(100% + var(--curtain-period));
   height: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--c1) 0px,
-    var(--c2) 80px,
-    var(--c3) 180px,
-    var(--c4) 280px,
-    var(--c5) 360px,
-    var(--c4) 440px,
-    var(--c3) 540px,
-    var(--c1) var(--curtain-period)
-  );
+  background: repeating-linear-gradient(90deg, var(--k-blue) 0px, var(--k-green) 180px, var(--k-yellow) 360px, var(--k-orange) 540px, var(--k-blue) var(--curtain-period));
   animation: curtain-slide var(--curtain-duration) linear infinite;
   will-change: transform;
 }

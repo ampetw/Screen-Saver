@@ -24,6 +24,8 @@ ASSETS_SRC="${ROOT_DIR}/assets"
 
 MIN_MACOS="11.0"
 
+export OUT_BUNDLE
+
 echo "→ Cleaning ${OUT_BUNDLE}"
 rm -rf "${OUT_BUNDLE}" "${OBJ_DIR}"
 mkdir -p "${OUT_BUNDLE}/Contents/MacOS"
@@ -66,6 +68,23 @@ cp -R "${ASSETS_SRC}/styles" "${OUT_BUNDLE}/Contents/Resources/assets/"
 
 # Drop the raw .zip from the bundled Resources to keep it lean.
 rm -f "${OUT_BUNDLE}/Contents/Resources/assets/fonts/ABC Diatype Mono.zip"
+
+echo "→ Stripping macOS metadata"
+python3 - <<'PY' || true
+import os
+
+root = os.environ.get("OUT_BUNDLE")
+if not root:
+    raise SystemExit(0)
+
+for dirpath, dirnames, filenames in os.walk(root):
+    if ".DS_Store" in filenames:
+        try:
+            os.remove(os.path.join(dirpath, ".DS_Store"))
+        except OSError:
+            pass
+PY
+xattr -cr "${OUT_BUNDLE}" || true
 
 echo "→ Ad-hoc code signing"
 codesign --force --deep --sign - "${OUT_BUNDLE}"
